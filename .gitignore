@@ -1,0 +1,31 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Tt]emp/
+*.exe
+*.dll
+*.pdb
+
+# NuGet packages
+packages/
+!packages/repositories.config
+
+# Python (若有 FastAPI)
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+
+# Others
+*.log
+*.DS_Store
+Thumbs.db
