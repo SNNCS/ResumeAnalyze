@@ -1,0 +1,13 @@
+Job Title: Data Analyst Intern
+
+Responsibilities:
+- Collect, clean, and analyze datasets to support business decision-making
+- Create dashboards and visualizations using Power BI or Tableau
+- Assist in building predictive models for sales forecasting and trend analysis
+- Prepare detailed reports summarizing insights and findings
+
+Requirements:
+- Bachelor’s student in Data Science, Statistics, or related field
+- Strong skills in SQL, Python (Pandas, NumPy), and Excel
+- Knowledge of regression and classification techniques
+- Attention to detail and strong problem-solving skills

@@ -1,0 +1,14 @@
+Job Title: AI & Software Engineering Intern
+
+Responsibilities:
+- Develop and test machine learning models using Python (scikit-learn, TensorFlow, or PyTorch)
+- Implement REST APIs for AI model integration
+- Collaborate with the software team to build an intelligent resume screening system
+- Participate in documentation, testing, and optimization of backend services
+
+Requirements:
+- Pursuing a degree in Computer Science, Artificial Intelligence, or related field
+- Strong knowledge of Python and object-oriented programming
+- Familiar with data analysis and model evaluation
+- Bonus: Experience with FastAPI or ASP.NET
+- Good communication and teamwork skills

@@ -1,0 +1,20 @@
+Name: Jordan Lee
+Title: Data Analyst Intern
+Education:
+- Bachelor of Data Science
+- University of Malaya (Expected Graduation: 2026)
+
+Skills:
+- Data Analysis: SQL, Pandas, NumPy, Excel
+- Visualization: Matplotlib, Power BI, Tableau
+- Machine Learning: Regression, Classification, Clustering
+- Communication: Report Writing, Dashboard Presentation
+
+Projects:
+- Customer Churn Prediction using Logistic Regression
+- Sales Performance Dashboard using Power BI
+- Sentiment Analysis on Customer Reviews with NLP
+
+Achievements:
+- Improved customer retention prediction by 15%
+- Automated data cleaning pipeline using Python scripts

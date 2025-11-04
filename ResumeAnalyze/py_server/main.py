@@ -13,15 +13,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 os.environ["OPENAI_API_KEY"] = "sk-30Dyi0KPAUEa2qoi3Q1RClmFBpeV9jHpvpanERIs60aJxoit"
 
-# ---- LangChain / LLM ----
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 
-# Sentence embeddings (local, no API key needed)
+# local embeddings
 from sentence_transformers import SentenceTransformer
-
-
-load_dotenv()  # Load the .env file (optional)
 
 app = FastAPI(title="Resume-JD Analyzer (LangChain)")
 
@@ -32,15 +28,14 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"],
 )
 
-# --------------------
+
 # Pydantic request/response models
-# --------------------
 class AnalyzeRequest(BaseModel):
     resume: str
     jd: str
     use_openai: bool = False
     enable_rerank: bool = False  # Placeholder for rerank toggle
-    language: str = "zh"          # 'zh' | 'en'
+    language: str = "en"          
 
 class ScoreBlock(BaseModel):
     Skills: float
@@ -61,9 +56,7 @@ class AnalyzeResponse(BaseModel):
     bar_chart_json: str
     pairsJson: str  # JSON-stringified list of {resume, jd, sim}
 
-# --------------------
 # Utility functions
-# --------------------
 _SKILL_SEEDS = [
     "python","java","c++","sql","pytorch","tensorflow","scikit-learn",
     "langchain","faiss","chromadb","nlp","rag","agent",
@@ -74,27 +67,24 @@ def naive_skill_extract(text: str) -> List[str]:
     t = re.sub(r"[^a-zA-Z0-9+.# ]+", " ", text.lower())
     found = []
     for s in _SKILL_SEEDS:
-        # Allow simple variants such as c++ or .net
         pattern = r"\b" + re.escape(s).replace(r"\+\+", r"\+\+") + r"\b"
         if re.search(pattern, t):
             found.append(s)
     return sorted(set(found))
 
 def sentence_split(text: str) -> List[str]:
-    # Simple sentence split based on newline or period
     parts = re.split(r"[\n\.]", text)
     return [p.strip() for p in parts if len(p.split()) >= 6][:50]
 
 def get_embeddings_backend(use_openai: bool):
     if use_openai and os.getenv("OPENAI_API_KEY"):
         return OpenAIEmbeddings(), None
-    # Fallback to local sentence embeddings (no API key required)
     st_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     return None, st_model
 
 def embed_texts(texts: List[str], emb_backend, st_model):
     if emb_backend is not None:
-        # OpenAIEmbeddings: call embed_query for each text
+        # OpenAIEmbeddings
         vecs = [emb_backend.embed_query(t) for t in texts]
         return np.array(vecs, dtype="float32")
     else:
@@ -111,11 +101,11 @@ def score_components(resume_txt: str, jd_txt: str) -> Dict[str, float]:
     jd_sk  = set(naive_skill_extract(jd_txt))
     skill_cover = len(res_sk & jd_sk) / (len(jd_sk) + 1e-9)
 
-    # Keywords (example must-have list)
+    # Keywords
     must = [k for k in ["sql","python","pytorch","tensorflow","langchain"] if k in jd_txt.lower()]
     kw_hit = sum(1 for k in must if k in resume_txt.lower()) / (len(must) + 1e-9)
 
-    # Experience (very simplified by using tenure-related keywords)
+    # Experience
     yrs_need = 2 if re.search(r"\b(2\+|two\+|at least 2)\b", jd_txt.lower()) else \
                1 if re.search(r"\b(1\+|one\+|at least 1)\b", jd_txt.lower()) else 0
     yrs_have = 2 if re.search(r"\b(2 years|two years|>1 year)\b", resume_txt.lower()) else \
@@ -125,7 +115,7 @@ def score_components(resume_txt: str, jd_txt: str) -> Dict[str, float]:
     # Education
     edu_match = 1.0 if re.search(r"\b(computer science|ai|data science)\b", resume_txt.lower()) else 0.6
 
-    # ATS/Format (bullet usage and quantified metrics)
+    # ATS/Format
     bullets = len(re.findall('^\\s*[-*\\u2022]', resume_txt, re.M))
     numbers = len(re.findall(r"\d+%", resume_txt))
     ats_score = min(1.0, 0.3 + 0.05*bullets + 0.1*min(numbers, 3))
@@ -149,7 +139,7 @@ def verdict_from_score(score: float) -> str:
     return "Major Gap"
 
 def build_radar_json(scores: Dict[str,float]) -> str:
-    # Chart.js config built as dict -> JSON
+    # Chart.js config
     data = {
         "type": "radar",
         "data": {
@@ -221,8 +211,7 @@ def call_llm_summary_and_bullets(resume_txt: str, jd_txt: str, lang: str, use_op
     try:
         llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
 
-        # Summary
-        if lang == "zh":
+        if lang == "en":
             prompt_sum = ChatPromptTemplate.from_messages([
                 ("system", "You are a senior recruiter. Produce a English summary comparing the candidate's resume and the JD, highlight strengths and gaps, and end with two action items."),
                 ("human", "Resume:\n{resume}\n\nJD:\n{jd}\n")
@@ -250,15 +239,12 @@ def call_llm_summary_and_bullets(resume_txt: str, jd_txt: str, lang: str, use_op
         return summary, bullets
 
     except Exception as e:
-        # Avoid blank UI states on the frontend; surface the error instead
         err = f"[LLM call failed: {type(e).__name__}] {e}"
         fallback = "- LLM call failed, so show placeholder bullets from the rule-based logic.\n- Verify the API key, model name, and network connectivity."
         return err, fallback
 
 
-# --------------------
 # Endpoints
-# --------------------
 @app.get("/debug/llm_state")
 def llm_state():
     import os
@@ -287,28 +273,28 @@ def analyze(req: AnalyzeRequest):
             summary="Missing input text.", bullets="", radar_chart_json="{}", bar_chart_json="{}", pairsJson="[]"
         )
 
-    # 1) Scoring
+    #Scoring
     comp = score_components(resume_txt, jd_txt)
     total = weighted_total(comp)
     verdict = verdict_from_score(total)
     keywords_hit = int(round(comp["Keywords"] * 10))  # Rough conversion for display only
 
-    # 2) Skill gaps and evidence pairs
+    #Skill gaps and evidence pairs
     gaps = top_missing_skills(resume_txt, jd_txt, topk=10)
     pairs = evidence_pairs(resume_txt, jd_txt, use_openai=req.use_openai)
 
-    # 3) LLM summary and bullets (fallback when no key)
+    #LLM summary and bullets
     summary, bullets = call_llm_summary_and_bullets(resume_txt, jd_txt, req.language, req.use_openai)
 
-    # 4) Chart.js config (JSON string)
+    #Chart.js config
     radar_json = build_radar_json(comp)
     bar_json = build_bar_json(gaps)
 
-    # 5) Derive job title from the first line of the JD
+    #Derive job title from the first line of the JD
     first_line = jd_txt.splitlines()[0].strip() if jd_txt else "Unknown Role"
     job_title = first_line[:40] + ("..." if len(first_line) > 40 else "")
 
-    # 6) Evidence sentence pairs as JSON (ASP.NET stores in session)
+    #Evidence sentence pairs as JSON
     pairs_json = json.dumps(pairs, ensure_ascii=False)
 
     return AnalyzeResponse(

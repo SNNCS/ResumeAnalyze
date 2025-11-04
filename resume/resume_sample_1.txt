@@ -1,0 +1,20 @@
+Name: Alex Chen
+Title: AI & Software Engineering Intern
+Education:
+- Bachelor of Computer Science (Artificial Intelligence)
+- Asia Pacific University of Technology & Innovation (Expected Graduation: 2026)
+
+Skills:
+- Programming: Python, Java, C++
+- Frameworks: TensorFlow, PyTorch, scikit-learn, FastAPI
+- Tools: Git, Visual Studio, Jupyter Notebook
+- Databases: MySQL, MongoDB
+
+Projects:
+- Smartphone Price Prediction using Random Forest Regression
+- Resume–Job Description Matcher using OpenAI Embeddings
+- LSTM-based Time Series Forecasting for Store Sales
+
+Achievements:
+- Achieved 90% prediction accuracy in regression task
+- Built AI Resume Analyzer integrated with ASP.NET dashboard

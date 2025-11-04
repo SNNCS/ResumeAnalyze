@@ -1,0 +1,13 @@
+Job Title: Full Stack Developer Intern
+
+Responsibilities:
+- Design and implement user-friendly web applications
+- Develop backend APIs using Node.js, ASP.NET, or Django
+- Integrate frontend components with backend services
+- Maintain code quality through version control (Git) and testing
+
+Requirements:
+- Studying Software Engineering, Computer Science, or related discipline
+- Familiar with React, HTML, CSS, and JavaScript
+- Knowledge of RESTful APIs and database design
+- Experience with GitHub and basic DevOps concepts is a plus

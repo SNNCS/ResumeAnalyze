@@ -1,0 +1,20 @@
+Name: Taylor Wong
+Title: Full Stack Developer Intern
+Education:
+- Bachelor of Software Engineering
+- Asia Pacific Institute of Technology (Expected Graduation: 2026)
+
+Skills:
+- Frontend: HTML, CSS, JavaScript, React
+- Backend: Node.js, ASP.NET, Django
+- Databases: PostgreSQL, Firebase
+- Tools: GitHub, Docker, Figma
+
+Projects:
+- E-Commerce Platform with integrated payment gateway
+- Task Manager Web App with user authentication
+- API backend for Resume Analysis System (FastAPI)
+
+Achievements:
+- Deployed full stack app to AWS EC2
+- Designed UI mockups and responsive layouts for 3+ web apps
